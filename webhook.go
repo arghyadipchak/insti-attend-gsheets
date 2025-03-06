@@ -7,6 +7,16 @@ import (
 )
 
 func webhookHandler(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Access-Control-Allow-Origin", "*")
+	w.Header().Set("Access-Control-Allow-Methods", "POST, OPTIONS")
+	w.Header().Set("Access-Control-Allow-Headers", "Authorization, Content-Type")
+
+	if r.Method == http.MethodOptions {
+		log.Println("[webhook] preflight request")
+		w.WriteHeader(http.StatusOK)
+		return
+	}
+
 	if r.Method != http.MethodPost {
 		log.Printf("[webhook] invalid request method: %s", r.Method)
 		http.Error(w, "invalid request method", http.StatusMethodNotAllowed)
@@ -34,6 +44,7 @@ func webhookHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if len(attendance) > 0 {
+		log.Printf("[webhook] received %d attendance records", len(attendance))
 		attendanceChan <- attendance
 	}
 
