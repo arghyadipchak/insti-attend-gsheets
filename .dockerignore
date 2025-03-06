@@ -1,0 +1,17 @@
+.git/
+.github/
+.gitignore
+
+.vscode/
+.DS_Store/
+
+bin/
+
+.dockerignore
+Dockerfile
+docker-compose.yml
+
+credentials.json
+
+LICENSE
+README.md

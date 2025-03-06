@@ -1,0 +1,16 @@
+services:
+  attender-cs219:
+    build: .
+    image: attender-cs219:dev
+    container_name: attender-cs219
+    restart: unless-stopped
+    environment:
+      SPREADSHEET_ID:
+      # CREDENTIALS_FILE: # Optional
+      # WEBHOOK_ADDR:     # Optional
+      # AUTH_TOKEN:       # Optional
+      TZ: Asia/Kolkata
+    ports:
+      - 8080:8080
+    volumes:
+      - ./credentials.json:/app/credentials.json
