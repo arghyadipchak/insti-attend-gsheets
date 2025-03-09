@@ -14,23 +14,28 @@ func attender() {
 
 	srv, err := sheets.NewService(context.Background(), option.WithCredentialsFile(credentialsFile))
 	if err != nil {
-		log.Printf("[attender] failed to retrieve sheets client: %v", err)
+		log.Println("[attender] failed to retrieve sheets client:", err)
 		return
 	}
 
-	if _, err := srv.Spreadsheets.Get(spreadsheetId).Do(); err != nil {
-		log.Printf("[attender] failed to retrieve spreadsheet: %v", err)
+	if spreadsheet, err := srv.Spreadsheets.Get(spreadsheetId).Do(); err != nil {
+		log.Println("[attender] failed to retrieve spreadsheet:", err)
 		return
+	} else {
+		log.Println("[attender] spreadsheet retrieved ::")
+		log.Println("[attender]   id:", spreadsheetId)
+		log.Println("[attender]   name:", spreadsheet.Properties.Title)
+		log.Printf("[attender]   sheets (%d): %s", len(spreadsheet.Sheets), getSheetNames(spreadsheet.Sheets))
 	}
 
-	log.Println("[attender] started")
+	log.Println("[attender] serving")
 
-	for attendance := range attendanceChan {
-		log.Println("[attender] processing attendance:", attendance)
+	for msg := range attendanceChan {
+		log.Println("[attender] processing attendance:", msg.UUID)
 
 		spreadsheet, err := srv.Spreadsheets.Get(spreadsheetId).Do()
 		if err != nil {
-			log.Printf("[attender] failed to retrieve spreadsheet: %v", err)
+			log.Println("[attender] failed to retrieve spreadsheet:", err)
 			return
 		}
 
@@ -44,7 +49,7 @@ func attender() {
 			}
 
 			if len(resp.Values) == 0 {
-				log.Printf("[attender] no data found in sheet %s", sheetName)
+				log.Println("[attender] empty sheet:", sheetName)
 				continue
 			}
 
@@ -54,18 +59,16 @@ func attender() {
 			}
 
 			var updates []*sheets.ValueRange
-			for i, row := range resp.Values[1:] {
+			for i, row := range resp.Values[skipRows:] {
 				if len(row) == 0 {
 					continue
 				}
 
-				rollNo := row[0].(string)
-				if record, exists := attendance[rollNo]; exists {
-					dateCol := record.Timestamp.Format("2 Jan")
-					if dateIndex, found := dateIndexMap[dateCol]; found {
-						cellRange := fmt.Sprintf("%s!%s%d", sheetName, columnIndexToLetter(dateIndex), i+2)
+				rollNo := row[rollColIndex].(string)
+				if record, exists := msg.Attendance[rollNo]; exists {
+					if dateIndex, found := dateIndexMap[record.Timestamp.Format(colDateLayout)]; found {
 						rb := &sheets.ValueRange{
-							Range:  cellRange,
+							Range:  fmt.Sprintf("%s!%s%d", sheetName, columnIndexToLetter(dateIndex), i+skipRows+1),
 							Values: [][]interface{}{{"P"}},
 						}
 						updates = append(updates, rb)
@@ -80,9 +83,9 @@ func attender() {
 				}
 				_, err = srv.Spreadsheets.Values.BatchUpdate(spreadsheetId, rb).Do()
 				if err != nil {
-					log.Printf("[attender] failed to write data to sheet %s: %v", sheetName, err)
+					log.Printf("[attender] failed to update sheet %s: %v", sheetName, err)
 				} else {
-					log.Printf("[attender] sheet updated: %s", sheetName)
+					log.Printf("[attender] updated sheet: %s (%d attendes)", sheetName, len(updates))
 				}
 			}
 		}

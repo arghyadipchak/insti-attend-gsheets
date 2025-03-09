@@ -12,11 +12,15 @@ import (
 var (
 	spreadsheetId string
 
+	colDateLayout = "2 Jan"
+	rollColIndex  = 1
+	skipRows      = 2
+
 	credentialsFile = "credentials.json"
 	webhookAddr     = ":8080"
 	authToken       string
 
-	attendanceChan  = make(chan map[string]AttendanceRecord, 10)
+	attendanceChan  = make(chan AttendanceMessage, 10)
 	attenderStopped = make(chan struct{})
 	webhookStopped  = make(chan struct{})
 )
@@ -52,19 +56,19 @@ func main() {
 	go func() {
 		defer close(webhookStopped)
 
-		log.Printf("[webhook] starting on %s", webhookAddr)
+		log.Println("[webhook] starting on", webhookAddr)
 		if err := server.ListenAndServe(); err != nil && err != http.ErrServerClosed {
-			log.Printf("[webhook] failed to start server: %v", err)
+			log.Println("[webhook] failed to start server:", err)
 		}
 	}()
 
 	select {
 	case <-attenderStopped:
 		if err := server.Shutdown(context.Background()); err != nil {
-			log.Printf("[webhook] failed to shutdown server: %v", err)
+			log.Println("[webhook] failed to shutdown server:", err)
 		} else {
 			<-webhookStopped
-			log.Printf("[webhook] stopped")
+			log.Println("[webhook] stopped")
 		}
 
 	case <-webhookStopped:
@@ -75,10 +79,10 @@ func main() {
 		println()
 		close(attendanceChan)
 		if err := server.Shutdown(context.Background()); err != nil {
-			log.Printf("[webhook] failed to shutdown server: %v", err)
+			log.Println("[webhook] failed to shutdown server", err)
 		} else {
 			<-webhookStopped
-			log.Printf("[webhook] stopped")
+			log.Println("[webhook] stopped")
 		}
 		<-attenderStopped
 	}

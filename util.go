@@ -2,11 +2,36 @@ package main
 
 import (
 	"encoding/json"
+	"errors"
 	"time"
+
+	"google.golang.org/api/sheets/v4"
 )
+
+type AttendanceMessage struct {
+	UUID       string
+	Attendance map[string]AttendanceRecord
+}
 
 type AttendanceRecord struct {
 	Timestamp time.Time `json:"timestamp"`
+}
+
+func (a *AttendanceRecord) UnmarshalJSON(data []byte) error {
+	var aux struct {
+		Timestamp *time.Time `json:"timestamp"`
+	}
+
+	if err := json.Unmarshal(data, &aux); err != nil {
+		return err
+	}
+
+	if aux.Timestamp == nil {
+		return errors.New("missing required field: timestamp")
+	}
+
+	a.Timestamp = *aux.Timestamp
+	return nil
 }
 
 func readAttendance(data []byte) (map[string]AttendanceRecord, error) {
@@ -16,6 +41,15 @@ func readAttendance(data []byte) (map[string]AttendanceRecord, error) {
 	}
 
 	return attendance, nil
+}
+
+func getSheetNames(sheets []*sheets.Sheet) string {
+	sheetsName := ""
+	for _, sheet := range sheets {
+		sheetsName += sheet.Properties.Title + ", "
+	}
+
+	return sheetsName[:len(sheetsName)-2]
 }
 
 func columnIndexToLetter(index int) string {
