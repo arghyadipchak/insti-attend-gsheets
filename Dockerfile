@@ -1,40 +1,36 @@
-# syntax=docker/dockerfile:1
+ARG GO_VERSION=1.24.5
+ARG DEBIAN_VERSION=12
 
-# Base images
-ARG GO_IMAGE=golang:1.24
-ARG DIST_IMAGE=debian:12-slim
+ARG BUILD_DIR=/app
 
-# Build config
-ARG DEBIAN_FRONTEND=noninteractive
-ARG WORKDIR=/app
+FROM golang:${GO_VERSION} AS build
 
-FROM ${GO_IMAGE} AS build
-
-ARG WORKDIR
-WORKDIR ${WORKDIR}
+ARG BUILD_DIR
+WORKDIR ${BUILD_DIR}
 
 COPY go.* .
 RUN go mod download
 
 COPY . .
 
-ARG CGO_ENABLED=1
+ARG CGO_ENABLED=0
 RUN make release
 
-FROM ${DIST_IMAGE}
+FROM debian:${DEBIAN_VERSION}-slim AS tzdata
 
-ARG DEBIAN_FRONTEND
-ARG WORKDIR
-
-WORKDIR ${WORKDIR}
-
+ARG DEBIAN_FRONTEND=noninteractive
 RUN \
   apt-get update && \
-  apt-get install -y --no-install-recommends ca-certificates tzdata && \
+  apt-get install -y --no-install-recommends tzdata && \
   rm -rf /var/lib/apt/lists/*
 
-COPY --from=build ${WORKDIR}/bin/attender-cs219 /usr/local/bin/attender-cs219
+FROM gcr.io/distroless/static-debian${DEBIAN_VERSION}
+
+ARG BUILD_DIR
+
+COPY --from=tzdata /usr/share/zoneinfo /usr/share/zoneinfo
+COPY --from=build ${BUILD_DIR}/bin/attender /
 
 EXPOSE 8080
 
-CMD ["attender-cs219"]
+CMD ["/attender"]

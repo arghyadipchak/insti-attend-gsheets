@@ -1,6 +1,6 @@
-module github.com/arghyadipchak/attender-cs219
+module github.com/arghyadipchak/insti-attend-gsheets
 
-go 1.24.1
+go 1.24.5
 
 require (
 	github.com/google/uuid v1.6.0

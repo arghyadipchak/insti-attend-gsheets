@@ -12,20 +12,20 @@ import (
 var (
 	spreadsheetId string
 
-	colDateLayout = "2 Jan"
-	rollColIndex  = 1
-	skipRows      = 2
+	colRollIndex  = columnLetterToIndex("A")
+	colDateIndex  = columnLetterToIndex("B")
+	colDateFormat = "2 Jan"
 
 	credentialsFile = "credentials.json"
 	webhookAddr     = ":8080"
 	authToken       string
 
-	attendanceChan  = make(chan AttendanceMessage, 10)
-	attenderStopped = make(chan struct{})
-	webhookStopped  = make(chan struct{})
+	attendanceChan = make(chan AttendanceMessage, 10)
+	sheetStopped   = make(chan struct{})
+	webhookStopped = make(chan struct{})
 )
 
-func init() {
+func read_env() {
 	if value, exists := os.LookupEnv("SPREADSHEET_ID"); exists {
 		spreadsheetId = value
 	} else {
@@ -34,6 +34,18 @@ func init() {
 
 	if value, exists := os.LookupEnv("CREDENTIALS_FILE"); exists {
 		credentialsFile = value
+	}
+
+	if value, exists := os.LookupEnv("COL_ROLL"); exists {
+		colRollIndex = columnLetterToIndex(value)
+	}
+
+	if value, exists := os.LookupEnv("COL_DATE_START"); exists {
+		colDateIndex = columnLetterToIndex(value)
+	}
+
+	if value, exists := os.LookupEnv("COL_DATE_FORMAT"); exists {
+		colDateFormat = value
 	}
 
 	if value, exists := os.LookupEnv("WEBHOOK_ADDR"); exists {
@@ -46,7 +58,9 @@ func init() {
 }
 
 func main() {
-	go attender()
+	read_env()
+
+	go sheet()
 
 	sigChan := make(chan os.Signal, 1)
 	signal.Notify(sigChan, os.Interrupt, syscall.SIGTERM)
@@ -63,7 +77,7 @@ func main() {
 	}()
 
 	select {
-	case <-attenderStopped:
+	case <-sheetStopped:
 		if err := server.Shutdown(context.Background()); err != nil {
 			log.Println("[webhook] failed to shutdown server:", err)
 		} else {
@@ -73,7 +87,7 @@ func main() {
 
 	case <-webhookStopped:
 		close(attendanceChan)
-		<-attenderStopped
+		<-sheetStopped
 
 	case <-sigChan:
 		println()
@@ -84,6 +98,6 @@ func main() {
 			<-webhookStopped
 			log.Println("[webhook] stopped")
 		}
-		<-attenderStopped
+		<-sheetStopped
 	}
 }

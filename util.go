@@ -61,3 +61,12 @@ func columnIndexToLetter(index int) string {
 
 	return column
 }
+
+func columnLetterToIndex(letter string) int {
+	index := 0
+	for _, char := range letter {
+		index = index*26 + int(char-'A'+1)
+	}
+
+	return index - 1
+}

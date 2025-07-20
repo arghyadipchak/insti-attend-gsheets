@@ -25,3 +25,27 @@ func TestColumnIndexToLetter(t *testing.T) {
 		}
 	}
 }
+
+func TestColumnLetterToIndex(t *testing.T) {
+	tests := []struct {
+		letter   string
+		expected int
+	}{
+		{"A", 0},
+		{"B", 1},
+		{"Z", 25},
+		{"AA", 26},
+		{"AB", 27},
+		{"AZ", 51},
+		{"BA", 52},
+		{"ZZ", 701},
+		{"AAA", 702},
+	}
+
+	for _, test := range tests {
+		result := columnLetterToIndex(test.letter)
+		if result != test.expected {
+			t.Errorf("letterToColumnIndex(%s) = %d; expected %d", test.letter, result, test.expected)
+		}
+	}
+}

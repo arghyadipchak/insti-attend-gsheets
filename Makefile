@@ -6,7 +6,7 @@ GOVET=${GOCMD} vet
 GOLINT=golangci-lint run
 
 BUILD_DIR=./bin/
-BIN=${BUILD_DIR}attender-cs219
+BIN=${BUILD_DIR}attender
 
 all: build
 
@@ -39,4 +39,4 @@ run: build
 	${BIN}
 
 docker:
-	docker build -t attender-cs219:dev .
+	docker build -t attender:dev .
