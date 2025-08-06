@@ -1,10 +1,10 @@
-package main
+package util
 
 import "testing"
 
 func TestColumnIndexToLetter(t *testing.T) {
 	tests := []struct {
-		index    int
+		index    uint32
 		expected string
 	}{
 		{0, "A"},
@@ -19,7 +19,7 @@ func TestColumnIndexToLetter(t *testing.T) {
 	}
 
 	for _, test := range tests {
-		result := columnIndexToLetter(test.index)
+		result := ColumnIndexToLetter(test.index)
 		if result != test.expected {
 			t.Errorf("columnIndexToLetter(%d) = %s; expected %s", test.index, result, test.expected)
 		}
@@ -29,7 +29,7 @@ func TestColumnIndexToLetter(t *testing.T) {
 func TestColumnLetterToIndex(t *testing.T) {
 	tests := []struct {
 		letter   string
-		expected int
+		expected uint32
 	}{
 		{"A", 0},
 		{"B", 1},
@@ -43,8 +43,9 @@ func TestColumnLetterToIndex(t *testing.T) {
 	}
 
 	for _, test := range tests {
-		result := columnLetterToIndex(test.letter)
-		if result != test.expected {
+		if result, err := ColumnLetterToIndex(test.letter); err != nil {
+			t.Errorf("columnLetterToIndex(%s) error: %v", test.letter, err)
+		} else if result != test.expected {
 			t.Errorf("letterToColumnIndex(%s) = %d; expected %d", test.letter, result, test.expected)
 		}
 	}
