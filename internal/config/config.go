@@ -19,6 +19,8 @@ var (
 
 	RowHeader uint32 = 1
 	RowStart  uint32 = 2
+	RowFormat        = "P"
+	RowIsTime        = false
 
 	CredentialsFile = "credentials.json"
 	WebhookAddr     = ":8080"
@@ -88,6 +90,13 @@ func Init() {
 			log.Fatalln("row ROW_START error:", value, "must be >= 1")
 		}
 		RowStart = uint32(value)
+	}
+
+	if value, exists := os.LookupEnv("ROW_FORMAT"); exists {
+		RowFormat = value
+		if _, err := time.Parse(value, "15:04:05"); err == nil {
+			RowIsTime = true
+		}
 	}
 
 	if value, exists := os.LookupEnv("WEBHOOK_ADDR"); exists {

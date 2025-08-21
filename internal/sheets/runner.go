@@ -76,9 +76,14 @@ func Runner() {
 				rollNo := row[config.ColRollIndex].(string)
 				if record, exists := msg.Attendance[rollNo]; exists {
 					if dateCol, found := dateMap[record.Timestamp.Format(config.ColDateFormat)]; found {
+						rowValue := config.RowFormat
+						if config.RowIsTime {
+							rowValue = record.Timestamp.Format(config.RowFormat)
+						}
+
 						rb := &sheets.ValueRange{
 							Range:  fmt.Sprintf("%s!%s%d", sheetName, dateCol, uint32(i)+config.RowStart),
-							Values: [][]interface{}{{"P"}},
+							Values: [][]interface{}{{rowValue}},
 						}
 						updates = append(updates, rb)
 					}

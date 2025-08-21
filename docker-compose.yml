@@ -12,6 +12,7 @@ services:
       # COL_DATE_FORMAT: 2 Jan                      # Optional (defaults to "2 Jan")
       # ROW_HEADER: 1                               # Optional (defaults to 1)
       # ROW_START: 2                                # Optional (defaults to 2)
+      # ROW_FORMAT: 15:04:05                        # Optional (defaults to "P")
       # WEBHOOK_ADDR: 0.0.0.0:80                    # Optional (defaults to ":8080")
       # AUTH_TOKEN: RandomSecretKey                 # Optional (defaults to <empty>)
       TZ: Asia/Kolkata
