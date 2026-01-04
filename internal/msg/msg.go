@@ -27,18 +27,22 @@ func NewAttendanceMessage(uuid string, attendance map[string]AttendanceRecord) A
 
 type AttendanceRecord struct {
 	Timestamp time.Time `json:"timestamp"`
+	Comment   string    `json:"comment,omitempty"`
 }
 
 func (a *AttendanceRecord) UnmarshalJSON(data []byte) (err error) {
 	var aux struct {
 		Timestamp *time.Time `json:"timestamp"`
+		Comment   string     `json:"comment,omitempty"`
 	}
+
 	if err = json.Unmarshal(data, &aux); err == nil {
 		if aux.Timestamp == nil {
 			err = errors.New("missing required field: timestamp")
 		} else {
 			a.Timestamp = *aux.Timestamp
 		}
+		a.Comment = aux.Comment
 	}
 
 	return

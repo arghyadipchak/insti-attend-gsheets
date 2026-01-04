@@ -31,10 +31,12 @@ func Runner() {
 		logE.Println("failed to retrieve spreadsheet:", err)
 		return
 	} else {
+		filteredSheets := util.FilterSheets(spreadsheet.Sheets, config.Sheets)
+
 		logO.Println("spreadsheet retrieved ::")
 		logO.Println("  id:", config.SpreadsheetId)
 		logO.Println("  name:", spreadsheet.Properties.Title)
-		logO.Printf("  sheets (%d): %s", len(spreadsheet.Sheets), util.JoinSheetNames(spreadsheet.Sheets))
+		logO.Printf("  sheets (%d): %s", len(filteredSheets), util.JoinSheetNames(filteredSheets))
 	}
 
 	logO.Println("serving")
@@ -48,7 +50,13 @@ func Runner() {
 			return
 		}
 
-		for _, sheet := range spreadsheet.Sheets {
+		filteredSheets := util.FilterSheets(spreadsheet.Sheets, config.Sheets)
+		if len(filteredSheets) == 0 {
+			logE.Println("no sheets found")
+			continue
+		}
+
+		for _, sheet := range filteredSheets {
 			sheetName := sheet.Properties.Title
 
 			resp, err := srv.Spreadsheets.Values.Get(config.SpreadsheetId, sheetName).Do()
@@ -62,28 +70,56 @@ func Runner() {
 				continue
 			}
 
-			dateMap := make(map[string]string)
-			for i, colName := range resp.Values[config.RowHeader-1][config.ColStartIndex:] {
-				dateMap[colName.(string)] = util.ColumnIndexToLetter(uint32(i) + config.ColStartIndex)
+			if len(resp.Values) < int(config.RowHeader) {
+				logE.Printf("sheet %s has insufficient rows for header at row %d", sheetName, config.RowHeader)
+				continue
+			}
+			if len(resp.Values[config.RowHeader-1]) <= int(config.ColStartIndex) {
+				logE.Printf("sheet %s has insufficient columns starting from index %d", sheetName, config.ColStartIndex)
+				continue
+			}
+
+			colMap := make(map[string]string)
+			if config.ColIsDate {
+				for i, colName := range resp.Values[config.RowHeader-1][config.ColStartIndex:] {
+					colMap[colName.(string)] = util.ColumnIndexToLetter(uint32(i) + config.ColStartIndex)
+				}
 			}
 
 			var updates []*sheets.ValueRange
 			for i, row := range resp.Values[config.RowStart-1:] {
-				if len(row) == 0 {
+				if len(row) <= int(config.ColRollIndex) {
+					logE.Printf("row %d has insufficient columns for roll number at index %d", i+int(config.RowStart), config.ColRollIndex)
 					continue
 				}
 
 				rollNo := row[config.ColRollIndex].(string)
 				if record, exists := msg.Attendance[rollNo]; exists {
-					if dateCol, found := dateMap[record.Timestamp.Format(config.ColDateFormat)]; found {
-						rowValue := config.RowFormat
-						if config.RowIsTime {
-							rowValue = record.Timestamp.Format(config.RowFormat)
-						}
+					rowValue := config.RowFormat
+					if config.RowIsTime {
+						rowValue = record.Timestamp.Format(config.RowFormat)
+					}
 
+					if config.ColIsDate {
+						if dateCol, found := colMap[record.Timestamp.Format(config.ColFormat)]; found {
+							rb := &sheets.ValueRange{
+								Range:  fmt.Sprintf("%s!%s%d", sheetName, dateCol, uint32(i)+config.RowStart),
+								Values: [][]interface{}{{rowValue}},
+							}
+							updates = append(updates, rb)
+						}
+					} else {
 						rb := &sheets.ValueRange{
-							Range:  fmt.Sprintf("%s!%s%d", sheetName, dateCol, uint32(i)+config.RowStart),
+							Range:  fmt.Sprintf("%s!%s%d", sheetName, config.ColFormat, uint32(i)+config.RowStart),
 							Values: [][]interface{}{{rowValue}},
+						}
+						updates = append(updates, rb)
+					}
+
+					if config.ColComment != "" && record.Comment != "" {
+						rb := &sheets.ValueRange{
+							Range:  fmt.Sprintf("%s!%s%d", sheetName, config.ColComment, uint32(i)+config.RowStart),
+							Values: [][]interface{}{{record.Comment}},
 						}
 						updates = append(updates, rb)
 					}
@@ -99,7 +135,7 @@ func Runner() {
 				if err != nil {
 					logE.Printf("failed to update sheet %s: %v", sheetName, err)
 				} else {
-					logO.Printf("updated sheet: %s (%d attendes)", sheetName, len(updates))
+					logO.Printf("updated sheet: %s (%d entries)", sheetName, len(updates))
 				}
 			}
 		}

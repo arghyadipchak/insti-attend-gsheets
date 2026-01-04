@@ -5,6 +5,7 @@ import (
 	"net"
 	"os"
 	"strconv"
+	"strings"
 	"time"
 
 	"github.com/arghyadipchak/insti-attend-gsheets/internal/util"
@@ -12,10 +13,13 @@ import (
 
 var (
 	SpreadsheetId string
+	Sheets        = []string{}
 
-	ColRollIndex, _  = util.ColumnLetterToIndex("A")
-	ColStartIndex, _ = util.ColumnLetterToIndex("B")
-	ColDateFormat    = "2 Jan"
+	ColRollIndex, _ = util.ColumnLetterToIndex("A")
+	ColStartIndex   = ColRollIndex + 1
+	ColFormat       = "2 Jan"
+	ColIsDate       = true
+	ColComment      = ""
 
 	RowHeader uint32 = 1
 	RowStart  uint32 = 2
@@ -32,6 +36,13 @@ func Init() {
 		SpreadsheetId = value
 	} else {
 		log.Fatalln("env variable not set: SPREADSHEET_ID")
+	}
+
+	if value, exists := os.LookupEnv("SHEETS"); exists {
+		Sheets = strings.Split(value, ",")
+		for i := range Sheets {
+			Sheets[i] = strings.TrimSpace(Sheets[i])
+		}
 	}
 
 	if value, exists := os.LookupEnv("CREDENTIALS_FILE"); exists {
@@ -60,14 +71,27 @@ func Init() {
 	if value, exists := os.LookupEnv("COL_START"); exists {
 		if ColStartIndex, err = util.ColumnLetterToIndex(value); err != nil {
 			log.Fatalln("column COL_START error:", value, err)
+		} else if ColStartIndex <= ColRollIndex {
+			log.Fatalln("column COL_START error:", value, "must be after COL_ROLL")
+		}
+	} else {
+		ColStartIndex = ColRollIndex + 1
+	}
+
+	if value, exists := os.LookupEnv("COL_FORMAT"); exists {
+		ColFormat = value
+		if _, err := time.Parse(value, "2 Jan"); err != nil {
+			ColIsDate = false
 		}
 	}
 
-	if value, exists := os.LookupEnv("COL_DATE_FORMAT"); exists {
-		if _, err := time.Parse(value, "2 Jan"); err != nil {
-			log.Fatalln("format COL_DATE_FORMAT invalid:", value, err)
+	if value, exists := os.LookupEnv("COL_COMMENT"); exists {
+		if ColCommentIndex, err := util.ColumnLetterToIndex(value); err != nil {
+			log.Fatalln("column COL_COMMENT error:", value, err)
+		} else if ColCommentIndex <= ColRollIndex {
+			log.Fatalln("column COL_COMMENT error:", value, "must be after COL_ROLL")
 		}
-		ColDateFormat = value
+		ColComment = value
 	}
 
 	if value, exists := os.LookupEnv("ROW_HEADER"); exists {
@@ -89,7 +113,12 @@ func Init() {
 		if value < 1 {
 			log.Fatalln("row ROW_START error:", value, "must be >= 1")
 		}
+		if value <= uint64(RowHeader) {
+			log.Fatalln("row ROW_START error:", value, "must be after ROW_HEADER")
+		}
 		RowStart = uint32(value)
+	} else {
+		RowStart = RowHeader + 1
 	}
 
 	if value, exists := os.LookupEnv("ROW_FORMAT"); exists {

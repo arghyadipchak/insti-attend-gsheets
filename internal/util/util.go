@@ -17,6 +17,22 @@ func JoinSheetNames(sheets []*sheets.Sheet) string {
 	return strings.Join(names, ", ")
 }
 
+func FilterSheets(sheets []*sheets.Sheet, names []string) (filtered []*sheets.Sheet) {
+	if len(names) == 0 {
+		return sheets
+	}
+
+	for _, sheet := range sheets {
+		for _, name := range names {
+			if sheet.Properties.Title == name {
+				filtered = append(filtered, sheet)
+			}
+		}
+	}
+
+	return
+}
+
 func ColumnIndexToLetter(index uint32) string {
 	var bytes []byte
 	for {
