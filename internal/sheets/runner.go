@@ -31,12 +31,13 @@ func Runner() {
 		logE.Println("failed to retrieve spreadsheet:", err)
 		return
 	} else {
-		filteredSheets := util.FilterSheets(spreadsheet.Sheets, config.Sheets)
+		filteredSheets := util.FilterSheets(spreadsheet.Sheets, config.SheetFilters)
 
 		logO.Println("spreadsheet retrieved ::")
 		logO.Println("  id:", config.SpreadsheetId)
 		logO.Println("  name:", spreadsheet.Properties.Title)
 		logO.Printf("  sheets (%d): %s", len(filteredSheets), util.JoinSheetNames(filteredSheets))
+
 	}
 
 	logO.Println("serving")
@@ -50,14 +51,14 @@ func Runner() {
 			return
 		}
 
-		filteredSheets := util.FilterSheets(spreadsheet.Sheets, config.Sheets)
+		filteredSheets := util.FilterSheets(spreadsheet.Sheets, config.SheetFilters)
 		if len(filteredSheets) == 0 {
 			logE.Println("no sheets found")
 			continue
 		}
 
-		for _, sheet := range filteredSheets {
-			sheetName := sheet.Properties.Title
+		for _, filter := range filteredSheets {
+			sheetName := filter.Name
 
 			resp, err := srv.Spreadsheets.Values.Get(config.SpreadsheetId, sheetName).Do()
 			if err != nil {
@@ -95,6 +96,10 @@ func Runner() {
 
 				rollNo := row[config.ColRollIndex].(string)
 				if record, exists := msg.Attendance[rollNo]; exists {
+					if !filter.Matches(record.Timestamp) {
+						continue
+					}
+
 					rowValue := config.RowFormat
 					if config.RowIsTime {
 						rowValue = record.Timestamp.Format(config.RowFormat)

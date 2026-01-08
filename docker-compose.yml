@@ -6,7 +6,7 @@ services:
     restart: unless-stopped
     environment:
       SPREADSHEET_ID:
-      # SHEETS: Sheet1,Sheet2                       # Optional (defaults to all sheets)
+      # SHEETS: Sheet1,Sheet2(10:00-14:00)          # Optional (defaults to all sheets, no time filter)
       # CREDENTIALS_FILE: /path/to/credentials.json # Optional (defaults to ./credentials.json)
       # COL_ROLL: A                                 # Optional (defaults to "A")
       # COL_START: B                                # Optional (defaults to COL_ROLL + 1)

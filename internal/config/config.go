@@ -13,7 +13,7 @@ import (
 
 var (
 	SpreadsheetId string
-	Sheets        = []string{}
+	SheetFilters  = []*util.SheetTimeFilter{}
 
 	ColRollIndex, _ = util.ColumnLetterToIndex("A")
 	ColStartIndex   = ColRollIndex + 1
@@ -39,9 +39,15 @@ func Init() {
 	}
 
 	if value, exists := os.LookupEnv("SHEETS"); exists {
-		Sheets = strings.Split(value, ",")
-		for i := range Sheets {
-			Sheets[i] = strings.TrimSpace(Sheets[i])
+		sheetSpecs := strings.Split(value, ",")
+
+		for _, sheetSpec := range sheetSpecs {
+			sheetSpec = strings.TrimSpace(sheetSpec)
+			filter, err := util.ParseSheetName(sheetSpec)
+			if err != nil {
+				log.Fatalf("failed to parse sheet specification '%s': %v", sheetSpec, err)
+			}
+			SheetFilters = append(SheetFilters, filter)
 		}
 	}
 
