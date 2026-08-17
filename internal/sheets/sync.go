@@ -26,7 +26,6 @@ func (c *Client) Sync(
 	ws *Worksheet,
 	records attendances.Attendance,
 ) (synced map[string]struct{}, errs []*e.Error) {
-
 	resp, err := c.Spreadsheets.Values.BatchGet(spreadsheetId).
 		Ranges(ws.headerRange(), ws.rollRange()).Do()
 	if err != nil {
@@ -122,7 +121,6 @@ func (c *Client) addHeaderColumns(
 	headerRow []any,
 	headers []string,
 ) (map[string]string, *e.Error) {
-
 	sheetId, err := c.sheetIdByName(spreadsheetId, ws.name)
 	if err != nil {
 		return nil, e.NewError("failed to resolve sheet ID", err)

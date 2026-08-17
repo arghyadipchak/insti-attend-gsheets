@@ -206,7 +206,6 @@ func createSpreadsheetsCollection(app core.App) error {
 	})
 
 	return app.Save(collection)
-
 }
 
 func createTokensCollection(app core.App) error {

@@ -122,7 +122,6 @@ func (w *Worksheet) planUpdates(
 	headerRow, rollColumn []any,
 	records attendances.Attendance,
 ) (updates []plannedUpdate, newHeaders []string, headers map[string]string) {
-
 	headers = w.parseHeaders(headerRow)
 	rollRows := w.parseRollRows(rollColumn)
 
@@ -169,7 +168,6 @@ func (w *Worksheet) resolve(
 	headers map[string]string,
 	newColumns map[string]string,
 ) (map[string]*gsheets.ValueRange, map[string]string) {
-
 	for header, col := range newColumns {
 		headers[header] = col
 	}

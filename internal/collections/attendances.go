@@ -171,7 +171,6 @@ func CreateAttendanceRecord(
 	records attendances.Attendance,
 	spreadsheetIds []string,
 ) (string, *e.Error) {
-
 	collection, err := app.FindCollectionByNameOrId(Attendances)
 	if err != nil {
 		return "", e.NewError("failed to find attendances collection", err)
