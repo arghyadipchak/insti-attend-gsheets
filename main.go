@@ -2,39 +2,31 @@ package main
 
 import (
 	"log"
-	"os"
-	"os/signal"
-	"syscall"
 
-	"github.com/arghyadipchak/insti-attend-gsheets/internal/config"
-	"github.com/arghyadipchak/insti-attend-gsheets/internal/msg"
-	"github.com/arghyadipchak/insti-attend-gsheets/internal/sheets"
-	"github.com/arghyadipchak/insti-attend-gsheets/internal/webhook"
+	"github.com/arghyadipchak/insti-attend-gsheets/internal/collections"
+	_ "github.com/arghyadipchak/insti-attend-gsheets/internal/migrations"
+	"github.com/arghyadipchak/insti-attend-gsheets/internal/webhooks"
+
+	"github.com/pocketbase/pocketbase"
+	"github.com/pocketbase/pocketbase/plugins/migratecmd"
+	"github.com/pocketbase/pocketbase/tools/osutils"
 )
 
 func main() {
-	config.Init()
+	app := pocketbase.New()
 
-	go sheets.Runner()
-	go webhook.Runner()
+	migratecmd.MustRegister(app, app.RootCmd, migratecmd.Config{
+		Automigrate: osutils.IsProbablyGoRun(),
+		Dir:         "internal/migrations",
+	})
 
-	sigChan := make(chan os.Signal, 1)
-	signal.Notify(sigChan, os.Interrupt, syscall.SIGTERM)
+	if err := collections.Register(app); err != nil {
+		log.Fatal(err)
+	}
 
-	select {
-	case <-msg.SheetStopped:
-		close(msg.WebhookStop)
-		<-msg.WebhookStopped
+	webhooks.Register(app)
 
-	case <-msg.WebhookStopped:
-		close(msg.AttendanceQueue)
-		<-msg.SheetStopped
-
-	case <-sigChan:
-		log.Println("[attender] received shutdown signal, stopping services...")
-		close(msg.WebhookStop)
-		close(msg.AttendanceQueue)
-		<-msg.SheetStopped
-		<-msg.WebhookStopped
+	if err := app.Start(); err != nil {
+		log.Fatal(err)
 	}
 }

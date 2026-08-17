@@ -1,36 +1,29 @@
-ARG GO_VERSION=1.24.5
-ARG DEBIAN_VERSION=12
+FROM golang:alpine AS builder
 
-ARG BUILD_DIR=/app
-
-FROM golang:${GO_VERSION} AS build
-
-ARG BUILD_DIR
-WORKDIR ${BUILD_DIR}
+WORKDIR /app
 
 COPY go.* .
 RUN go mod download
 
 COPY . .
 
-ARG CGO_ENABLED=0
-RUN make release
+RUN apk add --no-cache ca-certificates tzdata
+RUN update-ca-certificates
 
-FROM debian:${DEBIAN_VERSION}-slim AS tzdata
+ARG TARGETOS
+ARG TARGETARCH
 
-ARG DEBIAN_FRONTEND=noninteractive
-RUN \
-  apt-get update && \
-  apt-get install -y --no-install-recommends tzdata && \
-  rm -rf /var/lib/apt/lists/*
+RUN CGO_ENABLED=0 go build -ldflags "-w -s" -trimpath -o /insti-attend-gsheets .
 
-FROM gcr.io/distroless/static-debian${DEBIAN_VERSION}
+FROM scratch
 
-ARG BUILD_DIR
+COPY --from=builder /insti-attend-gsheets /
+COPY --from=builder /etc/ssl/certs/ca-certificates.crt /etc/ssl/certs/
+COPY --from=builder /usr/share/zoneinfo /usr/share/zoneinfo
 
-COPY --from=tzdata /usr/share/zoneinfo /usr/share/zoneinfo
-COPY --from=build ${BUILD_DIR}/bin/attender /
+VOLUME ["/data"]
 
-EXPOSE 8080
+EXPOSE 8090
 
-CMD ["/attender"]
+ENTRYPOINT ["/insti-attend-gsheets"]
+CMD ["serve", "--http=0.0.0.0:8090", "--dir=/data"]

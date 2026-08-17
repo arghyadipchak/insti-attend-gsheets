@@ -1,6 +1,11 @@
+# IDE & Editors
+.DS_Store
 .vscode/
-.DS_Store/
+.zed/
 
+# Environment & Secrets
+.env
+
+# Bin & Data
 bin/
-
-credentials.json
+*data/

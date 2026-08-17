@@ -1,0 +1,15 @@
+services:
+  iattend-gsheets:
+    image: arghyadipchak/insti-attend-gsheets:latest
+    container_name: iattend-gsheets
+    restart: unless-stopped
+    environment:
+      TZ: Asia/Kolkata
+    volumes:
+      - iattend-gsheets-data:/data
+    ports:
+      - 8090:8090
+
+volumes:
+  iattend-gsheets-data:
+    name: iattend-gsheets-data

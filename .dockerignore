@@ -1,17 +1,28 @@
+# Git & CI
 .git/
 .github/
 .gitignore
 
+# IDE & Editors
+.DS_Store
 .vscode/
-.DS_Store/
+.zed/
 
+# Environment & Secrets
+.env
+
+# Bin & Data
 bin/
+*data/
 
+# Makefile
+Makefile
+
+# Docker
 .dockerignore
 Dockerfile
-docker-compose.yml
+compose.yml
 
-credentials.json
-
+# Docs
 LICENSE
 README.md
