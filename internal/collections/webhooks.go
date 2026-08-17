@@ -1,6 +1,7 @@
 package collections
 
 import (
+	"crypto/subtle"
 	"errors"
 
 	e "github.com/arghyadipchak/insti-attend-gsheets/internal/errors"
@@ -33,8 +34,10 @@ func (w *Webhook) Authenticate(app core.App, secret string) (bool, *e.Error) {
 		return false, err
 	}
 
+	secretBytes := []byte(secret)
 	for _, tokenRecord := range w.ExpandedAll(Tokens) {
-		if TokenFromRecord(tokenRecord).Secret() == secret {
+		tokenSecret := []byte(TokenFromRecord(tokenRecord).Secret())
+		if subtle.ConstantTimeCompare(tokenSecret, secretBytes) == 1 {
 			return true, nil
 		}
 	}
