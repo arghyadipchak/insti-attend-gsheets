@@ -5,6 +5,7 @@
 
 # Environment & Secrets
 .env
+.env.*
 
 # Build & Data
 bin/

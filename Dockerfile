@@ -29,5 +29,8 @@ VOLUME ["/data"]
 
 EXPOSE 8090
 
+HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3 \
+    CMD ["/insti-attend-gsheets", "healthcheck"]
+
 ENTRYPOINT ["/insti-attend-gsheets"]
 CMD ["serve", "--http=0.0.0.0:8090", "--dir=/data"]

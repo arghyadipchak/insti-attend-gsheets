@@ -10,6 +10,7 @@
 
 # Environment & Secrets
 .env
+.env.*
 
 # Build & Data
 bin/
@@ -23,6 +24,7 @@ Makefile
 .dockerignore
 Dockerfile
 compose.yml
+compose.*.yml
 
 # Docs
 LICENSE

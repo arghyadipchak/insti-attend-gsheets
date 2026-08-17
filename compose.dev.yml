@@ -1,17 +1,14 @@
 services:
   iattend-gsheets:
-    image: arghyadipchak/insti-attend-gsheets:latest
-    container_name: iattend-gsheets
+    build: .
+    image: arghyadipchak/insti-attend-gsheets:dev
+    container_name: iattend-gsheets-dev
     restart: unless-stopped
     environment:
       USER_EMAIL: ${USER_EMAIL:-}
       USER_PASSWORD: ${USER_PASSWORD:-}
       TZ: Asia/Kolkata
     volumes:
-      - iattend-gsheets-data:/data
+      - ./data:/data
     ports:
       - 8090:8090
-
-volumes:
-  iattend-gsheets-data:
-    name: iattend-gsheets-data

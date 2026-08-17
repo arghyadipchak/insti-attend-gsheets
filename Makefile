@@ -13,7 +13,7 @@ PKG           := .
 PKGS          := ./...
 
 PORT          ?= 8090
-HOST          ?= 0.0.0.0
+HOST          ?= 127.0.0.1
 DATA_DIR      ?= ./data
 
 ENV_FILE      ?= .env

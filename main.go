@@ -4,6 +4,7 @@ import (
 	"log"
 
 	"github.com/arghyadipchak/insti-attend-gsheets/internal/collections"
+	"github.com/arghyadipchak/insti-attend-gsheets/internal/healthcheck"
 	_ "github.com/arghyadipchak/insti-attend-gsheets/internal/migrations"
 	"github.com/arghyadipchak/insti-attend-gsheets/internal/webhooks"
 
@@ -25,6 +26,7 @@ func main() {
 	}
 
 	webhooks.Register(app)
+	healthcheck.Register(app)
 
 	if err := app.Start(); err != nil {
 		log.Fatal(err)

@@ -39,8 +39,8 @@ Built as the Google Sheets sync companion for [**Insti Attend**](https://github.
 | `TZ` | Timezone identifier (e.g., `Asia/Kolkata`, `UTC`) | System default / `UTC` |
 
 > 💡 **CLI Flags**: Server bind address and data directory are passed as flags to the binary:
-> - `--http=0.0.0.0:8090` (bind address and port)
-> - `--dir=./data` (database and storage directory)
+> - `--http=127.0.0.1:8090` (bind address and port, default: `127.0.0.1:8090`)
+> - `--dir=./data` (database and storage directory, default: `./pb_data`)
 
 ---
 
@@ -58,9 +58,9 @@ Built as the Google Sheets sync companion for [**Insti Attend**](https://github.
        container_name: iattend-gsheets
        restart: unless-stopped
        environment:
-         TZ: Asia/Kolkata
          USER_EMAIL: admin@example.com
          USER_PASSWORD: your_secure_password
+         TZ: Asia/Kolkata
        volumes:
          - iattend-gsheets-data:/data
        ports:
@@ -89,9 +89,9 @@ docker run -d \
   --name iattend-gsheets \
   --restart unless-stopped \
   -p 8090:8090 \
-  -e TZ=Asia/Kolkata \
   -e USER_EMAIL=admin@example.com \
   -e USER_PASSWORD=your_secure_password \
+  -e TZ=Asia/Kolkata \
   -v iattend-gsheets-data:/data \
   arghyadipchak/insti-attend-gsheets:latest
 ```
@@ -126,6 +126,12 @@ Start the development server with automatic migrations and local data storage:
 ```bash
 make dev
 # or: go run . serve --dir ./data
+```
+
+Or run using the local development container:
+
+```bash
+docker compose -f compose.dev.yml up --build
 ```
 
 Admin UI: 👉 **`http://localhost:8090/_/`**
