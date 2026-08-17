@@ -5,7 +5,7 @@
 
 A lightweight, [PocketBase](https://pocketbase.io/)-powered service that synchronizes attendance logs into Google Sheets through authenticated webhooks and background cron workers.
 
-Built as the Google Sheets sync companion for [**Insti Attend**](https://github.com/arghyadipchak/insti-attend).
+Built as the Google Sheets sync companion for [**Insti Attend**](https://github.com/arghyadipchak/insti-attend)
 
 ---
 
@@ -153,7 +153,7 @@ make help
 POST /wbh/{slug}
 ```
 
-- `{slug}`: Unique webhook identifier configured in the Admin UI.
+- `{slug}`: Unique webhook identifier configured in the Admin UI
 
 ### Authentication
 
@@ -183,17 +183,17 @@ Send a JSON object mapping roll numbers / student identifiers to their attendanc
 ```
 
 #### Field Details
-- **`timestamp`** *(string, required)*: ISO 8601 / RFC 3339 formatted timestamp string.
+- **`timestamp`** *(string, required)*: ISO 8601 / RFC 3339 formatted timestamp string
 
 ### Response Codes
 
 | Status Code | Status | Meaning |
 | :--- | :--- | :--- |
-| **`201 Created`** | `{"id": "..."}` | Attendance batch received and queued for synchronization. |
-| **`204 No Content`** | *Empty* | Empty payload or no spreadsheets attached to this webhook. |
-| **`400 Bad Request`** | Error detail | Invalid JSON format or missing `timestamp` field. |
-| **`401 Unauthorized`** | Error detail | Missing, invalid, or unauthorized Bearer token. |
-| **`404 Not Found`** | Error detail | Webhook slug does not exist or webhook is disabled. |
+| **`201 Created`** | `{"id": "..."}` | Attendance batch received and queued for synchronization |
+| **`204 No Content`** | *Empty* | Empty payload or no spreadsheets attached to this webhook |
+| **`400 Bad Request`** | Error detail | Invalid JSON format or missing `timestamp` field |
+| **`401 Unauthorized`** | Error detail | Missing, invalid, or unauthorized Bearer token |
+| **`404 Not Found`** | Error detail | Webhook slug does not exist or webhook is disabled |
 
 ### Example `curl` Request
 
@@ -215,4 +215,4 @@ curl -X POST https://your-domain.com/wbh/class-cs101 \
 
 ## 📄 License
 
-This project is licensed under the **GNU Affero General Public License v3.0** (AGPL-3.0). See the [LICENSE](LICENSE) file for the full license text.
+Distributed under the GNU AGPLv3 License (see [LICENSE](LICENSE))
