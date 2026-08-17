@@ -11,8 +11,9 @@
 # Environment & Secrets
 .env
 
-# Bin & Data
+# Build & Data
 bin/
+dist/
 *data/
 
 # Makefile

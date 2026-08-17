@@ -20,8 +20,9 @@ ENV_FILE      ?= .env
 
 IMAGE         ?= arghyadipchak/insti-attend-gsheets:dev
 
-LDFLAGS       :=
-RELEASE_FLAGS := -trimpath -ldflags="-s -w"
+VERSION       ?= $(shell git describe --tags --always 2>/dev/null || echo "dev")
+LDFLAGS       := -ldflags="-X github.com/pocketbase/pocketbase.Version=$(VERSION)"
+RELEASE_FLAGS := -trimpath -ldflags="-s -w -X github.com/pocketbase/pocketbase.Version=$(VERSION)"
 
 # ==============================================================================
 # Reusable Snippets
@@ -46,12 +47,11 @@ help:
 	@echo ""
 	@printf "\033[1;32m🛠  Code Quality & Testing\033[0m\n"
 	@printf "  \033[36m%-12s\033[0m %s\n" "fmt" "Format code with gofmt -s"
-	@printf "  \033[36m%-12s\033[0m %s\n" "vet" "Run go vet static analysis"
 	@printf "  \033[36m%-12s\033[0m %s\n" "lint" "Run golangci-lint linter"
 	@printf "  \033[36m%-12s\033[0m %s\n" "lint-fix" "Run golangci-lint with auto-fix"
 	@printf "  \033[36m%-12s\033[0m %s\n" "fix" "Format code and auto-fix linter issues"
 	@printf "  \033[36m%-12s\033[0m %s\n" "test" "Execute unit tests"
-	@printf "  \033[36m%-12s\033[0m %s\n" "check" "Full verification (fmt + vet + lint + test)"
+	@printf "  \033[36m%-12s\033[0m %s\n" "check" "Full verification (fmt + lint + test)"
 	@echo ""
 	@printf "\033[1;32m📦 Build & Packaging\033[0m\n"
 	@printf "  \033[36m%-12s\033[0m %s\n" "build" "Build application binary in bin/"
@@ -82,13 +82,10 @@ serve: build
 # Code Quality & Testing
 # ==============================================================================
 
-.PHONY: fmt vet lint lint-fix fix test check
+.PHONY: fmt lint lint-fix fix test check
 
 fmt:
 	gofmt -s -w .
-
-vet:
-	$(GO) vet $(PKGS)
 
 lint:
 	golangci-lint run
@@ -101,7 +98,7 @@ fix: fmt lint-fix
 test:
 	$(GO) test -v $(PKGS)
 
-check: fmt vet lint test
+check: fmt lint test
 
 # ==============================================================================
 # Build & Packaging
