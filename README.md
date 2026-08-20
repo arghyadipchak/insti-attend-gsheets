@@ -1,7 +1,11 @@
 # 📊 Insti Attend GSheets
 
+[![CI](https://github.com/arghyadipchak/insti-attend-gsheets/actions/workflows/ci.yml/badge.svg)](https://github.com/arghyadipchak/insti-attend-gsheets/actions/workflows/ci.yml)
+[![GitHub Release](https://img.shields.io/github/v/release/arghyadipchak/insti-attend-gsheets?logo=github)](https://github.com/arghyadipchak/insti-attend-gsheets/releases)
+[![Docker Image Version](https://img.shields.io/docker/v/arghyadipchak/insti-attend-gsheets?sort=semver&logo=docker)](https://hub.docker.com/r/arghyadipchak/insti-attend-gsheets)
+[![Go Version](https://img.shields.io/github/go-mod/go-version/arghyadipchak/insti-attend-gsheets?logo=go)](go.mod)
 [![Commitizen friendly](https://img.shields.io/badge/commitizen-friendly-brightgreen.svg)](http://commitizen.github.io/cz-cli/)
-[![License](https://img.shields.io/badge/license-AGPLv3-blue.svg)](LICENSE)
+[![License](https://img.shields.io/github/license/arghyadipchak/insti-attend-gsheets)](LICENSE)
 
 A lightweight, [PocketBase](https://pocketbase.io/)-powered service that synchronizes attendance logs into Google Sheets through authenticated webhooks and background cron workers.
 
@@ -221,4 +225,4 @@ curl -X POST https://your-domain.com/wbh/class-cs101 \
 
 ## 📄 License
 
-Distributed under the GNU AGPLv3 License (see [LICENSE](LICENSE))
+This project is licensed under the **GNU AGPLv3 License** (see [`LICENSE`](LICENSE))
