@@ -1,11 +1,11 @@
 # 📊 Insti Attend GSheets
 
-[![CI](https://github.com/arghyadipchak/insti-attend-gsheets/actions/workflows/ci.yml/badge.svg)](https://github.com/arghyadipchak/insti-attend-gsheets/actions/workflows/ci.yml)
-[![GitHub Release](https://img.shields.io/github/v/release/arghyadipchak/insti-attend-gsheets?logo=github)](https://github.com/arghyadipchak/insti-attend-gsheets/releases)
-[![Docker Image Version](https://img.shields.io/docker/v/arghyadipchak/insti-attend-gsheets?sort=semver&logo=docker)](https://hub.docker.com/r/arghyadipchak/insti-attend-gsheets)
-[![Go Version](https://img.shields.io/github/go-mod/go-version/arghyadipchak/insti-attend-gsheets?logo=go)](go.mod)
-[![Commitizen friendly](https://img.shields.io/badge/commitizen-friendly-brightgreen.svg)](http://commitizen.github.io/cz-cli/)
-[![License](https://img.shields.io/github/license/arghyadipchak/insti-attend-gsheets)](LICENSE)
+[![CI](https://img.shields.io/github/actions/workflow/status/arghyadipchak/insti-attend-gsheets/ci.yml?logo=github-actions&logoColor=white)](https://github.com/arghyadipchak/insti-attend-gsheets/actions/workflows/ci.yml)
+[![GitHub Release](https://img.shields.io/github/v/release/arghyadipchak/insti-attend-gsheets?logo=github&logoColor=white&color=0969da)](https://github.com/arghyadipchak/insti-attend-gsheets/releases/latest)
+[![Docker Image Version](https://img.shields.io/docker/v/arghyadipchak/insti-attend-gsheets?sort=semver&logo=docker&logoColor=white&color=2496ed)](https://hub.docker.com/r/arghyadipchak/insti-attend-gsheets)
+[![Go Version](https://img.shields.io/github/go-mod/go-version/arghyadipchak/insti-attend-gsheets?logo=go&logoColor=white&color=00add8)](go.mod)
+[![Commitizen Friendly](https://img.shields.io/badge/commitizen-friendly-brightgreen?logo=git&logoColor=white)](http://commitizen.github.io/cz-cli/)
+[![License](https://img.shields.io/github/license/arghyadipchak/insti-attend-gsheets?color=8250df)](LICENSE)
 
 A lightweight, [PocketBase](https://pocketbase.io/)-powered service that synchronizes attendance logs into Google Sheets through authenticated webhooks and background cron workers.
 
@@ -225,4 +225,4 @@ curl -X POST https://your-domain.com/wbh/class-cs101 \
 
 ## 📄 License
 
-This project is licensed under the **GNU AGPLv3 License** (see [`LICENSE`](LICENSE))
+This project is licensed under the **GNU Affero General Public License v3.0** ([AGPL-3.0](LICENSE))
