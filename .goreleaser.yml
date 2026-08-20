@@ -7,23 +7,12 @@ before:
     - go mod tidy
 
 builds:
-  - id: insti-attend-gsheets
-    main: .
-    binary: insti-attend-gsheets
-    env:
-      - CGO_ENABLED=0
-    flags:
+  - flags:
       - -trimpath
     ldflags:
       - -s -w -X github.com/pocketbase/pocketbase.Version={{ .Version }}
-    goos:
-      - linux
-      - darwin
-      - windows
-    goarch:
-      - amd64
-      - arm64
-      - arm
+    env:
+      - CGO_ENABLED=0
     goarm:
       - '7'
     ignore:
@@ -33,14 +22,10 @@ builds:
         goarch: arm
 
 archives:
-  - id: default
-    formats:
-      - tar.gz
+  - name_template: '{{ .ProjectName }}_{{ .Version }}_{{ .Os }}_{{ .Arch }}{{ if .Arm }}v{{ .Arm }}{{ end }}'
     format_overrides:
       - goos: windows
-        formats:
-          - zip
-    name_template: '{{ .ProjectName }}_{{ .Version }}_{{ .Os }}_{{ .Arch }}{{ if .Arm }}v{{ .Arm }}{{ end }}'
+        formats: [zip]
     files:
       - LICENSE
       - README.md
@@ -50,3 +35,6 @@ checksum:
 
 snapshot:
   version_template: '{{ incpatch .Version }}-next'
+
+changelog:
+  disable: true
