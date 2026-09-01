@@ -4,7 +4,7 @@
 [![GitHub Release](https://img.shields.io/github/v/release/arghyadipchak/insti-attend-gsheets?logo=github&logoColor=white&color=0969da)](https://github.com/arghyadipchak/insti-attend-gsheets/releases/latest)
 [![Docker Image Version](https://img.shields.io/docker/v/arghyadipchak/insti-attend-gsheets?sort=semver&logo=docker&logoColor=white&color=2496ed)](https://hub.docker.com/r/arghyadipchak/insti-attend-gsheets)
 [![Go Version](https://img.shields.io/github/go-mod/go-version/arghyadipchak/insti-attend-gsheets?logo=go&logoColor=white&color=00add8)](go.mod)
-[![Commitizen Friendly](https://img.shields.io/badge/commitizen-friendly-brightgreen?logo=git&logoColor=white)](http://commitizen.github.io/cz-cli/)
+[![Commitizen Friendly](https://img.shields.io/badge/commitizen-friendly-brightgreen?logo=git&logoColor=white)](https://commitizen.github.io/cz-cli/)
 [![License](https://img.shields.io/github/license/arghyadipchak/insti-attend-gsheets?color=8250df)](LICENSE)
 
 A lightweight, [PocketBase](https://pocketbase.io/)-powered service that synchronizes attendance logs into Google Sheets through authenticated webhooks and background cron workers.
