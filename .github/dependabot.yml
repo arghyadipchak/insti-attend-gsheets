@@ -9,28 +9,38 @@ updates:
       include: scope
     open-pull-requests-limit: 10
     groups:
-      go-dependencies:
+      go-packages:
         patterns:
           - '*'
-
-  - package-ecosystem: github-actions
-    directory: /
-    schedule:
-      interval: weekly
-    commit-message:
-      prefix: chore
-      include: scope
-    open-pull-requests-limit: 10
-    groups:
-      actions-dependencies:
-        patterns:
-          - '*'
+        update-types:
+          - minor
+          - patch
 
   - package-ecosystem: docker
     directory: /
     schedule:
       interval: weekly
     commit-message:
-      prefix: chore
+      prefix: ci
       include: scope
     open-pull-requests-limit: 10
+    groups:
+      docker-images:
+        patterns:
+          - '*'
+        update-types:
+          - minor
+          - patch
+
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: weekly
+    commit-message:
+      prefix: ci
+      include: scope
+    open-pull-requests-limit: 10
+    groups:
+      github-actions:
+        patterns:
+          - '*'
