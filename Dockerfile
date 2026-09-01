@@ -2,7 +2,7 @@ FROM alpine:latest AS sysinfo
 
 RUN apk add --no-cache ca-certificates tzdata && update-ca-certificates
 
-FROM --platform=$BUILDPLATFORM golang:alpine AS builder
+FROM --platform=$BUILDPLATFORM golang:1.27-alpine AS builder
 
 WORKDIR /app
 

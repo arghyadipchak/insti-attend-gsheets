@@ -1,6 +1,6 @@
 module github.com/arghyadipchak/insti-attend-gsheets
 
-go 1.26.5
+go 1.27
 
 require (
 	github.com/maniartech/gotime/v2 v2.0.4
