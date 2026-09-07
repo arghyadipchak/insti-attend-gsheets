@@ -5,9 +5,9 @@ go 1.27
 require (
 	github.com/maniartech/gotime/v2 v2.0.4
 	github.com/pocketbase/dbx v1.12.0
-	github.com/pocketbase/pocketbase v0.40.1
+	github.com/pocketbase/pocketbase v0.40.2
 	github.com/spf13/cobra v1.10.2
-	google.golang.org/api v0.295.0
+	google.golang.org/api v0.297.0
 )
 
 require (
