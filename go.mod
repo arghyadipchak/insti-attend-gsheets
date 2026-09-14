@@ -5,7 +5,7 @@ go 1.27
 require (
 	github.com/maniartech/gotime/v2 v2.0.4
 	github.com/pocketbase/dbx v1.12.0
-	github.com/pocketbase/pocketbase v0.40.2
+	github.com/pocketbase/pocketbase v0.40.3
 	github.com/spf13/cobra v1.10.2
 	google.golang.org/api v0.297.0
 )
@@ -44,7 +44,7 @@ require (
 	go.opentelemetry.io/otel v1.44.0 // indirect
 	go.opentelemetry.io/otel/metric v1.44.0 // indirect
 	go.opentelemetry.io/otel/trace v1.44.0 // indirect
-	golang.org/x/crypto v0.55.0 // indirect
+	golang.org/x/crypto v0.56.0 // indirect
 	golang.org/x/image v0.45.0 // indirect
 	golang.org/x/net v0.58.0 // indirect
 	golang.org/x/oauth2 v0.36.0 // indirect
