@@ -4,43 +4,39 @@ updates:
     directory: /
     schedule:
       interval: weekly
+      day: saturday
     commit-message:
-      prefix: chore
+      prefix: build
       include: scope
     open-pull-requests-limit: 10
     groups:
       go-packages:
-        patterns:
-          - '*'
-        update-types:
-          - minor
-          - patch
+        patterns: ['*']
+        update-types: ['minor', 'patch']
 
   - package-ecosystem: docker
     directory: /
     schedule:
       interval: weekly
+      day: saturday
     commit-message:
       prefix: ci
       include: scope
     open-pull-requests-limit: 10
     groups:
       docker-images:
-        patterns:
-          - '*'
-        update-types:
-          - minor
-          - patch
+        patterns: ['*']
+        update-types: ['minor', 'patch']
 
   - package-ecosystem: github-actions
     directory: /
     schedule:
       interval: weekly
+      day: saturday
     commit-message:
       prefix: ci
       include: scope
     open-pull-requests-limit: 10
     groups:
       github-actions:
-        patterns:
-          - '*'
+        patterns: ['*']
