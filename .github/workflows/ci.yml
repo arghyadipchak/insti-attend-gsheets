@@ -8,15 +8,15 @@ on:
   workflow_dispatch:
 
 concurrency:
-  group: ${{ github.workflow }}-${{ github.ref }}
-  cancel-in-progress: true
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
 
 permissions:
   contents: read
 
 jobs:
-  check:
-    name: Check & Test
+  build:
+    name: Build
     runs-on: ubuntu-latest
 
     steps:
@@ -29,7 +29,7 @@ jobs:
           go-version: stable
           cache: true
 
-      - name: Run golangci-lint
+      - name: Run linter
         uses: golangci/golangci-lint-action@v9
         with:
           version: latest
@@ -38,5 +38,5 @@ jobs:
       - name: Run tests
         run: go test -v ./...
 
-      - name: Build validation
+      - name: Validate build
         run: go build -v .

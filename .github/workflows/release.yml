@@ -9,7 +9,7 @@ permissions:
 
 jobs:
   release-notes:
-    name: Create Release Notes
+    name: Release Notes
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
@@ -32,7 +32,7 @@ jobs:
           body: ${{ steps.git-cliff.outputs.content }}
 
   goreleaser:
-    name: Build & Publish Release
+    name: Release Artifacts
     runs-on: ubuntu-latest
 
     steps:
@@ -53,18 +53,18 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-  publish-docker-image:
-    name: Build & Push Docker Image
+  docker-image:
+    name: Release Docker Image
     runs-on: ubuntu-latest
 
     steps:
       - name: Checkout repository
         uses: actions/checkout@v7
 
-      - name: Set up QEMU
+      - name: Setup QEMU
         uses: docker/setup-qemu-action@v4
 
-      - name: Set up Docker Buildx
+      - name: Setup Docker Buildx
         uses: docker/setup-buildx-action@v4
 
       - name: Log in to Docker Hub
